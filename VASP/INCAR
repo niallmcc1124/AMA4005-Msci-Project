@@ -1,0 +1,35 @@
+system = Tober9A          # Description of the system
+ENCUT = 520               # Energy cut-off for the plane-wave basis set in eV
+ISMEAR = 0                # Smearing method: 0 uses Gaussian smearing
+SIGMA = 0.05              # Width of the smearing in eV.
+EDIFF = 1e-6              # Energy convergence criterion for electronic self-consistency loop
+NELM = 100                # Maximum number of SCF iterations per electronic step
+ISYM = 0                  # No symmetry, suitable for amorphous systems
+
+ALGO = VeryFast           # We use ALGO=VeryFast and PREC=Low for quick calculations
+PREC = Normal             # Low precision setting to reduce computational cost
+
+IBRION = -1                # No ionic relaxation: -1 means fixed ion positions
+NSW = 0                # Number of ionic steps: 0 means no ionic steps
+POTIM = 0.25              # MD time-step, in fs
+MDALGO = 5
+ISIF = 1
+CSVR_PERIOD = 40          # CHANGE THIS --- About 100 fs for weak coupling
+TEBEG = 300               # Temperature, in Kelvin
+NELMIN = 4                # Minimum 4 steps per time step, avoid breaking after 2 steps
+
+NWRITE = 1                # Controls output
+NBLOCK = 1                # After NBLOCK ionic steps the pair-correlation function and the DOS are calculated and the ionic configuration is written to the XDATCAR-file
+KBLOCK = 20               # After KBLOCK * NBLOCK ionic steps the averaged pair-correlation function and DOS are written to the files PCDAT and DOSCAR
+NWRITE = 0                # controls output
+LCHARG = .FALSE.          # no charge density written out
+LWAVE = .FALSE.           # no wave function coefficients written out
+
+LREAL = Auto              # Real-space projection to significantly speed up the calculations
+#MAXMIX = 40              # CHANGE THIS --- reuse mixer from one MD step to next
+
+LPLANE = .TRUE.
+NCORE  = 16
+LSCALU = .FALSE.
+NSIM   = 4
+
