@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --nodes 1
+#SBATCH --ntasks 24
+#SBATCH --time 2:00:00
+#SBATCH --job-name LAMMPS
+#SBATCH --partition=k2-hipri
+#SBATCH --mem-per-cpu=1G
+#SBATCH --mail-user=nmccallion05@qub.ac.uk
+#SBATCH --mail-type=BEGIN,END,FAIL
+
+module purge 
+module load openmpi/5.0.3/gcc-14.1.0+int8
+module load gsl/2.8/gcc-14.1.0
+
+export OMP_NUM_THREADS=1
+
+mpirun -np 24 /users/40360191/Codes/singraber-n2p2/src/interface/lammps-nnp/src/lmp_mpi -in Niall_in_nnp_delta.lmp > lmp.out 

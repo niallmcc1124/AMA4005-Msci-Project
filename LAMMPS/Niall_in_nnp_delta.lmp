@@ -1,0 +1,84 @@
+###############################################################################
+# Complex 4 from Kepp et al NNP 
+###############################################################################
+###############################################################################
+# VARIABLES
+###############################################################################
+clear
+# Configuration files
+variable cfgFile         string "data.lmp" # is the starting frame
+# Timesteps
+variable numSteps        equal  10000000
+variable dt              equal  0.00025
+variable ndump           equal  1  # how many time it is printing
+variable t               equal  time
+
+# NN
+variable hdnnpCutoff     equal  6.0000
+variable hdnnpDir        string "DD_CNN_Model"
+
+# Masses
+variable mass_Ca         equal  40.078
+variable mass_Si         equal  28.0855
+variable mass_O          equal  15.9994
+variable mass_H          equal  1.0080
+
+###############################################################################
+# GENERAL SETUP
+###############################################################################
+units metal
+boundary p p p
+atom_style atomic
+read_data ${cfgFile}
+
+mass 4 ${mass_Ca}
+mass 3 ${mass_Si}
+mass 2 ${mass_O}
+mass 1 ${mass_H}
+
+timestep ${dt}
+thermo 10
+neigh_modify delay 10
+
+#thermo_style custom step time pe 
+thermo_style custom step time temp pe ke etotal
+
+###############################################################################
+# Δ‑Learning Overlay: REP + NNP
+###############################################################################
+
+pair_style hybrid/overlay lj/cut 1.12246 nnp dir ${hdnnpDir} showew no showewsum ${ndump} resetew yes maxew 10000000 calcd 1 wricde 1000 maxcde 10000000 wricdf 1000 maxcdf 10000000 cflength 1.0 cfenergy 1.0 emap "4:Ca,3:Si,2:O,1:H"
+#pair_style hybrid/overlay lj/cut 1.12246 hdnnp
+#pair_style hdnnp dir ${hdnnpDir} showew no showewsum ${ndump} resetew yes maxew 10000000 calcd 1 wricde 1000 maxcde 10000000 wricdf 1000 maxcdf 10000000 cflength 1.0 cfenergy 1.0 emap "4:Ca,3:Si,2:O,1:H"
+
+pair_modify shift yes
+
+pair_coeff * * lj/cut 0.2 1.0 1.12246
+pair_coeff * * nnp ${hdnnpCutoff}
+
+###############################################################################
+# RERUN / MD
+###############################################################################
+restart 1000 Checkpoint1.chk Checkpoint2.chk 
+fix     rn all nvt temp 50 50 1 
+velocity all create 50 15
+
+run     1
+
+reset_timestep 0
+
+variable        perat equal pe
+variable        T equal temp
+variable        TotalE equal etotal
+fix     pr all print ${ndump} "${t} ${perat} ${T} ${TotalE}" file potential.out screen no title "t potential Temperature Total Energy"
+
+dump 1 all custom ${ndump} dump.force id fx fy fz
+dump_modify 1 sort id
+
+dump 2 all custom ${ndump} dump.traj id type x y z vx vy vz
+dump_modify 2 sort id
+
+run ${numSteps}
+thermo ${ndump}
+
+write_data data.out
