@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=8
+#SBATCH --job-name=nnp-scaling
+#SBATCH --partition=k2-hipri
+#SBATCH --time 00:30:00
+#SBATCH --mem-per-cpu=10G
+
+module purge 
+module load mpi/openmpi/5.0.3/gcc-14.1.0
+module load gsl/2.8/gcc-14.1.0
+module load libs/eigen/3.4.0/gcc-14.1.0
+
+mpirun -np 8 /users/40360191/SOFTWARE_USE/n2p2/bin/nnp-prune range 1E-02  
+
