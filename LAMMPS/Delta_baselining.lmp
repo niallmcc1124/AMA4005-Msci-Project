@@ -1,0 +1,60 @@
+###############################################################################
+# LJ BASELINE ENERGY + FORCE CALCULATION FOR Δ-LEARNING
+###############################################################################
+
+clear
+units metal
+boundary p p p
+atom_style atomic
+
+# Load your DFT frame (converted to LAMMPS data format)
+variable cfgFile string "data.lmp"
+read_data ${cfgFile}
+
+# Masses #Ca Si O H
+mass 4 40.078 
+mass 3 28.0855
+mass 2 15.9994
+mass 1 1.0080
+
+###############################################################################
+# PURELY REPULSIVE LJ (same for all pairs)
+###############################################################################
+
+# LJ minimum at rmin = 2^(1/6)*sigma = 1.12246 Å for sigma = 1.0 Å
+pair_style lj/cut 1.12246
+pair_modify shift yes
+
+# eps = 0.2 eV, sigma = 1.0 Å, cutoff = rmin
+pair_coeff * * 0.2 1.0 1.12246
+
+###############################################################################
+# COMPUTE LJ ENERGY AND FORCES
+###############################################################################
+
+compute peall all pe
+compute f all property/atom fx fy fz
+
+# Print total LJ energy
+thermo_style custom step pe
+thermo 1
+
+# Dump LJ forces
+dump 1 all custom 1 lj_forces.dump id type x y z fx fy fz
+dump_modify 1 sort id
+
+
+# Wrap compute in a variable
+variable LJenergy equal c_peall
+
+# Print LJ energy once per frame during rerun
+fix LJenergyPrint all print 1 "${LJenergy}" file lj_energy.out screen no
+
+# Evaluate energy and forces without MD
+#run 0
+#so rerun loops through xyz file (named input)
+#dump x y z reads the trajectroy from teh extended .xyz file
+#box no tells us we want to keep the box format from the first run
+rerun input.xyz dump x y z box no format xyz
+
+write_data lj_output.data
