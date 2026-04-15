@@ -1,1 +1,12 @@
+Okay so you wnat to run even more Molecular Dynamics,
+this can help, so things to note cNNP.job is the code required to run n2p2 within lammps however it assumes you have that set up within your system (cant help with that sorry)
+but for those tat have got it installed, .lmp files basically tell LAMMPS what you are doing the in_nnp.lmp assumes using a committee, in_nnp_delta assumes a delta baseline as well as a committee so the overlay feature is required to implement this
+the Delta_baselining.lmp will calacualte the baselinig potential you are using for the whole committee so you can get straight to generating.
 
+Having now got a (hopefully long) LAMMPS simulation we can extract thermal properties,
+each .py explains what value it is calaculating and what pre-requisets are required to implement them.
+
+For those of us with whimsy in our life each of my python scripts output Ta-da! to show that your code has ran and a graph is awaiting to be viewed.
+This is the final folder regarding code, the other folders will include figures, presentational work and ultimately my final full masters thesis (Yikes!)
+
+Happy coding Niall :)
