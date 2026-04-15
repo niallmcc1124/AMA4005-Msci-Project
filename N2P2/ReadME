@@ -1,1 +1,11 @@
-
+So This folder goes over building the Committee of Neural Networks, using the method outlined in "Welcome to n2p2 documentation"
+Scaling,Pruning,Rescaling and training,
+the .job files are ones ran within n2p2 to do that specific job
+Clear_Directories is for whatever reason you need to purge a full directory and also to repopulate directories with subdirectories
+Proccessing_Seeds.sh is a bash file that massively speeds up creating models as it automates running each sectiong for each seed within the committee
+(There is only so mayn cd../ a man can do before he would snap :) )
+Once this has Been created 
+rmse.sh can tell you how well the model is doing by checking the you gessed it RMSE for both Forces and energies.
+If adopting the active learining method (which I would strongly reccommend) the SE.py gives you the stadnard error of each step in regards to the first initial frame
+GenNewFrames.sh can be ran after selecting which frames (and sticking them in a .txt file) to recompute values using VASP and then adding them to the training set.
+If you want to be even cleverer and adopt the delta baselining method then you can run teh .awk file to change your data to baselined data however to do the 2 things metioned above you will have needed to go into the LAMMPS folder!
